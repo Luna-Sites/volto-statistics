@@ -35,9 +35,13 @@ const messages = defineMessages({
     id: 'Expand sidebar',
     defaultMessage: 'Expand sidebar',
   },
-  order: {
-    id: 'Order',
-    defaultMessage: 'Order',
+  // order: {
+  //   id: 'Order',
+  //   defaultMessage: 'Order',
+  // },
+  statistics: {
+    id: 'Statistics',
+    defaultMessage: 'Statistics',
   },
 });
 
@@ -51,7 +55,7 @@ const Sidebar = (props) => {
     documentTab,
     blockTab,
     settingsTab,
-    orderTab = true,
+    // orderTab = true,
   } = props;
   const [expanded, setExpanded] = useState(
     cookies.get('sidebar_expanded') !== 'false',
@@ -104,7 +108,142 @@ const Sidebar = (props) => {
     dispatch(setSidebarTab(data.activeIndex));
   };
 
-  return <h1>nimic</h1>;
+  return (
+    <Fragment>
+      <BodyClass
+        className={expanded ? 'has-sidebar' : 'has-sidebar-collapsed'}
+      />
+      <div
+        className={cx('sidebar-container', { collapsed: !expanded })}
+        style={size > 0 ? { width: size } : null}
+      >
+        <Button
+          type="button"
+          aria-label={
+            expanded
+              ? intl.formatMessage(messages.shrinkSidebar)
+              : intl.formatMessage(messages.expandSidebar)
+          }
+          className={
+            content && content.review_state
+              ? `${content.review_state} trigger`
+              : 'trigger'
+          }
+          onClick={onToggleExpanded}
+        />
+        <Button
+          type="button"
+          className="full-size-sidenav-btn"
+          onClick={onToggleFullSize}
+          aria-label="full-screen-sidenav"
+        >
+          <Icon
+            className="full-size-icon"
+            name={showFull ? expandSVG : collapseSVG}
+          />
+        </Button>
+        <Tab
+          menu={{
+            secondary: true,
+            pointing: true,
+            attached: true,
+            tabular: true,
+            className: 'formtabs',
+          }}
+          className="tabs-wrapper"
+          renderActiveOnly={false}
+          activeIndex={tab}
+          onTabChange={onTabChange}
+          panes={[
+            !!documentTab && {
+              menuItem: {
+                key: 'documentTab',
+                as: 'button',
+                className: 'ui button',
+                content: type || intl.formatMessage(messages.document),
+              },
+              pane: (
+                <Tab.Pane
+                  key="metadata"
+                  className="tab-wrapper"
+                  id="sidebar-metadata"
+                />
+              ),
+            },
+            !!blockTab && {
+              menuItem: {
+                key: 'blockTab',
+                as: 'button',
+                className: 'ui button',
+                content: intl.formatMessage(messages.block),
+              },
+              pane: (
+                <Tab.Pane
+                  key="properties"
+                  className="tab-wrapper"
+                  id="sidebar-properties"
+                >
+                  <Icon
+                    className="tab-forbidden"
+                    name={forbiddenSVG}
+                    size="48px"
+                  />
+                </Tab.Pane>
+              ),
+            },
+            // !!orderTab && {
+            //   menuItem: intl.formatMessage(messages.order),
+            //   pane: (
+            //     <Tab.Pane
+            //       key="order"
+            //       className="tab-wrapper"
+            //       id="sidebar-order"
+            //     >
+            //       <Icon
+            //         className="tab-forbidden"
+            //         name={forbiddenSVG}
+            //         size="48px"
+            //       />
+            //     </Tab.Pane>
+            //   ),
+            // },
+            {
+              menuItem: intl.formatMessage(messages.statistics),
+              pane: (
+                <Tab.Pane
+                  key="statistics"
+                  className="tab-wrapper"
+                  id="sidebar-statistics"
+                >
+                  <div style={{ padding: '1em' }}>
+                    <strong>Dummy Statistics Tab</strong>
+                    <p>Test</p>
+                  </div>
+                </Tab.Pane>
+              ),
+            },
+            !!settingsTab && {
+              menuItem: intl.formatMessage(messages.settings),
+              pane: (
+                <Tab.Pane
+                  key="settings"
+                  className="tab-wrapper"
+                  id="sidebar-settings"
+                >
+                  <Icon
+                    className="tab-forbidden"
+                    name={forbiddenSVG}
+                    size="48px"
+                  />
+                </Tab.Pane>
+              ),
+            },
+          ].filter((tab) => tab)}
+        />
+      </div>
+      <div className={expanded ? 'pusher expanded' : 'pusher'} />
+    </Fragment>
+  );
 };
 
 Sidebar.propTypes = {

@@ -1,5 +1,6 @@
+import React from 'react';
+
 const applyConfig = (config) => {
-  console.log('here config', config);
   return config;
 };
 
